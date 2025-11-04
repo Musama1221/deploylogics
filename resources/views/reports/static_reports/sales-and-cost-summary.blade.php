@@ -195,7 +195,7 @@
                             <td class="text-right rep-font-bold">{{number_format($total_CostReturn,3)}}</td>
                             <td class="text-right rep-font-bold">{{number_format($total_NetCost,3)}}</td>
                             <td class="text-right rep-font-bold">{{number_format($total_GrossMargin,3)}}</td>
-                            <td class="text-right rep-font-bold">{{ number_format((($total_NetSale / $total_NetCost )-1)*100 , 3) }} % </td>
+                            <td class="text-right rep-font-bold">{{ number_format((($total_NetCost==0?0: ($total_NetSale / $total_NetCost) )-1)*100 , 3) }} % </td>
                         </tr>
                     </table>
                 </div>

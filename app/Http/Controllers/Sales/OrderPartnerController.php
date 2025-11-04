@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Sales;
 use App\Models\Sale\TblSaleCustomerMember;
 use App\Models\TblDefiMembershipType;
 use Exception;
-use Intervention\Image\Image;
+// use Intervention\Image\Image;
+use Intervention\Image\Facades\Image;
 use App\Models\TblAccCoa;
 use App\Library\Utilities;
 use App\Models\TblDefiCity;
@@ -54,11 +55,9 @@ class OrderPartnerController extends Controller
         $this->page_view = '/'.self::$redirect_url.'/view';
     }
 
-   
-
     public function create($id = null)
     {
-        // dd($id);
+      
         $data['page_data'] = [];
         $data['page_data']['title'] = self::$page_title;
         $data['page_data']['path_index'] = $this->prefixIndexPage.self::$redirect_url;
@@ -70,7 +69,6 @@ class OrderPartnerController extends Controller
                 $data['page_data'] = array_merge($data['page_data'], Utilities::editForm());
                 $data['id'] = $id;
                 $data['current'] =  TblSaleOrderPartner::where(Utilities::currentBC())->where('partner_id',$id)->first();
-
                 if(isset($data['current']->city_id)){
                     $data['areas'] = TblDefiArea::where('city_id' , $data['current']->city_id)->where('area_entry_status' , 1)->get();
                 }else{
@@ -93,21 +91,23 @@ class OrderPartnerController extends Controller
             if(isset($subdomain) && $subdomain == 'adminalnawras'){
                 $doc_data = [
                     'biz_type'          => 'branch',
-                    'model'             => 'TblSaleCustomer',
-                    'code_field'        => 'customer_code',
+                    'model'             => 'TblSaleOrderPartner',
+                    'code_field'        => 'partner_code',
                     'code_prefix'       => strtoupper('a')
                 ];
 
                 $data['partner_code'] = Utilities::customCustomerCode($doc_data);
+
             }else{
                 $doc_data = [
                     'biz_type'          => 'branch',
-                    'model'             => 'TblSaleCustomer',
-                    'code_field'        => 'customer_code',
+                    'model'             => 'TblSaleOrderPartner',
+                    'code_field'        => 'partner_code',
                     'code_prefix'       => strtoupper('OP')
                 ];
 
                 $data['partner_code'] = Utilities::documentCode($doc_data);
+   
             }
         }
 
@@ -188,8 +188,8 @@ class OrderPartnerController extends Controller
                 if(isset($subdomain) && $subdomain == 'adminalnawras'){
                     $doc_data = [
                         'biz_type'          => 'branch',
-                        'model'             => 'TblSaleCustomer',
-                        'code_field'        => 'customer_code',
+                        'model'             => 'TblSaleOrderPartner',
+                        'code_field'        => 'partner_code',
                         'code_prefix'       => strtoupper('a')
                     ];
 
@@ -197,9 +197,9 @@ class OrderPartnerController extends Controller
                 }else{
                     $doc_data = [
                         'biz_type'          => 'branch',
-                        'model'             => 'TblSaleCustomer',
-                        'code_field'        => 'customer_code',
-                        'code_prefix'       => strtoupper('cu')
+                        'model'             => 'TblSaleOrderPartner',
+                        'code_field'        => 'partner_code',
+                        'code_prefix'       => strtoupper('OP')
                     ];
 
                     $OrderPartner->partner_code = Utilities::documentCode($doc_data);
@@ -214,12 +214,18 @@ class OrderPartnerController extends Controller
             $OrderPartner->partner_local_name = $request->partner_local_name;
             $OrderPartner->partner_entry_status = isset($request->partner_entry_status)?"1":"0";
            
-            if($request->hasFile('customer_image'))
+            if($request->hasFile('partner_image'))
             {
-                $image = $request->file('customer_image');
+                $image = $request->file('partner_image');
                 $filename = time() . '.' . $image->getClientOriginalExtension();
-                $path = public_path('/images/' . $filename);
+                $path = public_path('assets/images/' . $filename);
                 Image::make($image->getRealPath())->resize(200, 200)->save($path);
+
+                //////
+                // $image = $request->file('partner_image'); // for example
+                // $filename = time() . '.' . $image->getClientOriginalExtension();
+                // $path = public_path('uploads/' . $image->getClientOriginalName());
+                // Image::make($image->getRealPath())->resize(200, 200)->save($path);
                 $OrderPartner->partner_image = isset($filename)?$filename:'';
             }
 
@@ -293,30 +299,30 @@ class OrderPartnerController extends Controller
      * @param int $phone
      * @return void
      */
-    public function getByPhone(Request $request){
-        $data = [];
+    // public function getByPhone(Request $request){
+    //     $data = [];
 
-        if(!isset($request->mobile)){
-            return $this->jsonErrorResponse($data, 'Please Enter Customer Mobile No.', 422);
-        }
+    //     if(!isset($request->mobile)){
+    //         return $this->jsonErrorResponse($data, 'Please Enter Customer Mobile No.', 422);
+    //     }
 
-        $customer = TblSaleCustomer::where('customer_phone_1' , $request->mobile);
-        if($customer->exists()){
-            $customer = $customer->first();
+    //     $customer = TblSaleCustomer::where('customer_phone_1' , $request->mobile);
+    //     if($customer->exists()){
+    //         $customer = $customer->first();
 
-            $data['customer_code']      = $customer->customer_code;
-            $data['customer_name']      = $customer->customer_name;
-            $data['customer_id']        = $customer->customer_id;
-            $data['customer_phone_1']   = $customer->customer_phone_1;
-            $data['city_id']            = $customer->city_id;
-            $data['region_id']          = $customer->region_id;
-            $data['found']              = true;
-            return $this->jsonSuccessResponse($data, 'Customer Data Is Loaded', 200);
-        }else{
-            $data['found'] = false;
-            return $this->jsonErrorResponse($data, 'No Customer Exist With This Phone/Mobile No.', 422);
-        }
-    }
+    //         $data['partner_code']      = $customer->partner_code;
+    //         $data['customer_name']      = $customer->customer_name;
+    //         $data['customer_id']        = $customer->customer_id;
+    //         $data['customer_phone_1']   = $customer->customer_phone_1;
+    //         $data['city_id']            = $customer->city_id;
+    //         $data['region_id']          = $customer->region_id;
+    //         $data['found']              = true;
+    //         return $this->jsonSuccessResponse($data, 'Customer Data Is Loaded', 200);
+    //     }else{
+    //         $data['found'] = false;
+    //         return $this->jsonErrorResponse($data, 'No Customer Exist With This Phone/Mobile No.', 422);
+    //     }
+    // }
 
     /**
      * Display the specified resource.

@@ -108,14 +108,12 @@
                             <label class="col-lg-6 erp-col-form-label"></label>
                             <div class="col-lg-6">
                                 @php
-                                    $image_url = isset($image)?'/images/'.$image:"";
+                                    $image_url = isset($image)? asset('assets/images/' . $image): asset('assets/media/custom/select_image.png');
                                 @endphp
                                 <div class="kt-avatar kt-avatar--outline" id="kt_user_avatar_1">
-                                    @if($image_url)
-                                        <div class="kt-avatar__holder" style="background-image: url({{$image_url}})"></div>
-                                    @else
-                                        <div class="kt-avatar__holder" style="background-image: url(/assets/media/custom/select_image.png)"></div>
-                                    @endif
+                               
+                                    <div class="kt-avatar__holder" style="background-image: url('{{ $image_url }}')"></div>
+                                   
                                     <label class="kt-avatar__upload" data-toggle="kt-tooltip" title="" data-original-title="Change image">
                                         <i class="fa fa-pen"></i>
                                         <input type="file" name="partner_image" accept="image/png, image/jpg, image/jpeg">
@@ -141,7 +139,7 @@
 
                         <div class="form-group-block row">
                             
-                            <div class="col-lg-6">
+                            <!-- <div class="col-lg-6">
                                 <div class="row">
                                     <label class="col-lg-6 erp-col-form-label">Home Delivery: <span class="required"> * </span></label>
                                     <div class="col-lg-6">
@@ -153,7 +151,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>{{-- end row--}}
                         <div class="form-group-block row">
                             <div class="col-lg-12">
@@ -354,6 +352,14 @@
     <script src="{{ asset('js/pages/js/customer.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/jquery-ui.js') }}"></script>
     <script>
+        
+
+         $(document).ready(function() {
+
+             $('#whatsappmessagebtn').hide();
+
+         });
+
         $('#selectItemsBtn').on('click',function (e) {
             e.preventDefault();
             var selected=[];
